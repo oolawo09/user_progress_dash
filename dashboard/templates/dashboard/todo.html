@@ -1,0 +1,9 @@
+{% if todo_list %}
+    <ul>
+    {% for todo in todo_list %}
+        <li>{{ todo.todo_text }}</li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>No todos are available.</p>
+{% endif %}
