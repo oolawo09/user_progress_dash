@@ -1,15 +1,32 @@
-{% if todo_list %}
-    <ul>
-    {% for todo in todo_list %}
-        <li>{{ todo.todo_text }}</li>
-    {% endfor %}
-    </ul>
+<form action="{% url 'dashboard:index'  %}" method="post">
+  {% csrf_token %} username:
+  <input type="text" name="username" />
+  <input type="submit" value="submit" />
+</form>
+
+______________________________________________________________________ {% if course_titles %}
+<ul>
+  {% for title in course_titles %}
+  <li>{{ title }}</li>
+  {% endfor %}
+</ul>
+
 {% else %}
-    <p>No todos are available.</p>
+<p>You haven't signed up for any courses</p>
+{% endif %} ______________________________________________________________________ {% if todo_list %}
+<ul>
+  {% for todo in todo_list %}
+  <li>{{ todo.todo_text }}</li>
+  {% endfor %}
+</ul>
+{% else %}
+<p>No todos are available.</p>
 {% endif %}
 
-<form action="{% url 'dashboard:addTodo' %}" method="post">
-{% csrf_token %}
-    New task: <input type="text" name="text"/>
-    <input type="submit" value="addTodo" />
+<form action="{% url 'dashboard:add_todo' %}" method="post">
+  {% csrf_token %} new task:
+  <input type="text" name="text" />
+  <input type="submit" value="submit" />
 </form>
+
+______________________________________________________________________

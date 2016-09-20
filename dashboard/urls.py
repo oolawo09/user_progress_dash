@@ -5,6 +5,7 @@ from . import views
 app_name = 'dashboard'
 
 urlpatterns = [
-    url(r'^addTodo' ,views.addTodo, name='addTodo'), 
-    url(r'^todo', views.todo, name='todo'), 
+    url(r'^add_todo' ,views.add_todo, name='add_todo'),
+    url(r'^$', views.index, name='index'),
+
 ]

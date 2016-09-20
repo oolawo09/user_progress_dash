@@ -1,0 +1,7 @@
+- Deleting todos
+- Display course progress
+  * stop generating new token with each call
+  * 
+- Beautify views
+- Logging
+- Refactor config file

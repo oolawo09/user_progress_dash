@@ -1,20 +1,23 @@
 from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect
-from .models import Todo 
-from django.urls import reverse 
+from .models import Todo
+from django.urls import reverse
+from .util import getCourseTitles
 
 # Create your views here.
-def index(request): 
-    return HttpResponse("Hello, world. You're at the polls index.")
-
-
-def todo(request):
+def index(request):
+    #prep todos
     todo_list = Todo.objects.all()
-    print(todo_list)
-    context = {'todo_list' : todo_list}
+    #prep course progress
+    course_titles = getCourseTitles(request.POST.get('username', 'no username provided'))
+    #prep context
+    context = {'todo_list' : todo_list, 'course_titles': course_titles}
+    #render
     return render(request, 'dashboard/todo.html', context)
 
-def addTodo(request):
-    t = Todo(todo_text=request.POST['text'])
+def add_todo(request):
+    #add todo to database
+    t = Todo(todo_text=request.POST.get('text', 'no text provided'))
     t.save()
-    return HttpResponseRedirect(reverse('dashboard:todo'))
+    #redirect to home page
+    return HttpResponseRedirect(reverse('dashboard:index'))
