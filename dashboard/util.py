@@ -1,6 +1,8 @@
 import requests
 import requests.auth
 from django.conf import settings
+from .models import Course
+
 
 def refreshToken():
     client_auth = requests.auth.HTTPBasicAuth('602057e53fe4e27eded9', 'b72544f2235e6418e7e027d2856e947f907071c9') #move these vals to config file
@@ -10,13 +12,25 @@ def refreshToken():
     json_resp = response.json()['access_token']
     return json_resp
 
-def getCourseTitles(username):
+def getAllCourses(username):
+    #throw error if no username is provided
+    #needs more rigorous checking of this string's characters and format
+
     token = refreshToken()
     authField = "Bearer " + token
     headers = {"Authorization" : authField}
-    course_list = requests.get("http://localhost:8000/api/courses/v1/courses/?username=olawo", headers=headers)
+    url = "http://localhost:8000/api/courses/v1/courses/?username=" + username
+    course_list = requests.get(url, headers=headers)
     course_list = course_list.json()['results']
-    course_titles = []
+    courses = []
     for course in course_list :
-        course_titles.append(course['course_id'])
-    return course_titles
+        courses.append(getCourse(course['id'], headers))
+    return courses
+
+
+def getCourse(id, headers):
+    url = "http://localhost:8000/api/courses/v1/courses/" + id
+    course_details = requests.get(url, headers=headers)
+    course_details = course_details.json()
+    course = Course(course_details['number'], course_details['start'], course_details['end'])
+    return course

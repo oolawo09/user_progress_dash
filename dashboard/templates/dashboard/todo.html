@@ -4,10 +4,10 @@
   <input type="submit" value="submit" />
 </form>
 
-______________________________________________________________________ {% if course_titles %}
+______________________________________________________________________ {% if courses %}
 <ul>
-  {% for title in course_titles %}
-  <li>{{ title }}</li>
+  {% for course in courses %}
+  <li>{{ course.number }} {{course.start}} {{course.end}}</li>
   {% endfor %}
 </ul>
 
