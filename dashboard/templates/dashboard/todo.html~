@@ -7,9 +7,3 @@
 {% else %}
     <p>No todos are available.</p>
 {% endif %}
-
-<form action="{% url 'dashboard:addTodo' %}" method="post">
-{% csrf_token %}
-    New task: <input type="text" name="text"/>
-    <input type="submit" value="addTodo" />
-</form>
