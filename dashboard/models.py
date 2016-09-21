@@ -4,6 +4,7 @@ from django.db import models
 class Todo(models.Model):
     todo_text = models.CharField(max_length=200)
     done = models.BooleanField(default=False)
+    #username = models.CharField(max_length=200)
 
     def __str__(self):
        return self.todo_text
@@ -15,4 +16,4 @@ class Course(models.Model):
         self.end = end
 
     def __str__(self):
-        return self.number + " " + self.start + " " 
+        return self.number + " " + self.start + " "

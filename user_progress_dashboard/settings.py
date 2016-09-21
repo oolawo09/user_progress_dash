@@ -24,6 +24,7 @@ SECRET_KEY = '*lsvu!x5^f*e#l67f+*j3yrx(-2w2z2n&54c(^)l(y#a893=x$'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
+DEBUG_LOG = True
 
 ALLOWED_HOSTS = []
 
@@ -119,3 +120,14 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.10/howto/static-files/
 
 STATIC_URL = '/static/'
+
+#oauth2 configuration
+#credentials
+CLIENT_ID ='602057e53fe4e27eded9'
+CLIENT_SECRET = 'b72544f2235e6418e7e027d2856e947f907071c9'
+USERNAME = 'olawo' #need to find a reliable encryption module !!
+PASSWORD = 'oo4423' #ditto
+#url prefixes for REST calls
+TOKEN_URL_PREFIX = 'http://localhost:8000/oauth2/access_token/'
+COURSE_LIST_URL_PREFIX = 'http://localhost:8000/api/courses/v1/courses/?username='
+COURSE_DERAIL_URL_PREFIX = 'http://localhost:8000/api/courses/v1/courses/'

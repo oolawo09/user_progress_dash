@@ -2,15 +2,18 @@ from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect
 from .models import Todo
 from django.urls import reverse
-from .util import getAllCourses
+from .controllers import getAllCourses
 
 # Create your views here.
 def index(request):
+    #save username
+    username = request.POST.get('username', 'olawo')    
+
     #prep todos
     todo_list = Todo.objects.all()
+    #(username = username)
     #prep course progress
-    courses = getAllCourses(request.POST.get('username', 'no username provided'))
-    print(courses)
+    courses = getAllCourses(username)
     #prep context
     context = {'todo_list' : todo_list, 'courses': courses}
     #render
