@@ -21,5 +21,5 @@ urlpatterns = [
     url(r'^admin/', admin.site.urls),
 
     #all other urls routed to dashboard app
-    url(r'^$', include('dashboard.urls')),
+    url(r'^', include('dashboard.urls')),
 ]

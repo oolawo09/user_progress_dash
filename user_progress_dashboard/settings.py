@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/1.10/ref/settings/
 """
 
 import os
+import logging
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -19,13 +20,41 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.10/howto/deployment/checklist/
 
+#
+LMS_PORT = '8000'
+LMS_ROOT_URL = 'http://localhost:' + LMS_PORT
+
+# oauth2 configuration
+# credentials
+CLIENT_ID = '602057e53fe4e27eded9'
+CLIENT_SECRET = 'b72544f2235e6418e7e027d2856e947f907071c9'
+USERNAME = 'olawo'  # need to find a reliable encryption module !!
+PASSWORD = 'oo4423'  # ditto
+# value that's bound to be in the user json from lms api. using it as a checker
+USER_EXISTS_CHECKER_KEY = 'name'
+# url prefixes for REST calls
+TOKEN_URL_PREFIX = LMS_ROOT_URL + '/oauth2/access_token/'
+COURSE_LIST_URL_PREFIX = LMS_ROOT_URL + '/api/courses/v1/courses/?username='
+COURSE_DERAIL_URL_PREFIX = LMS_ROOT_URL + '/api/courses/v1/courses/'
+USERS_API_URL_PREFIX = LMS_ROOT_URL + \
+    '/api/user/v1/accounts/{%s}/[?view=shared]'
+COURSE_DETAIL_USER_URL_PREFIX = LMS_ROOT_URL + \
+    '/api/courses/v1/courses/?username='
+# cookies
+USERNAME_COOKIE = 'username'
+
+# HTTP request types
+REQUEST_TYPE_POST = 'POST'
+
+
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = '*lsvu!x5^f*e#l67f+*j3yrx(-2w2z2n&54c(^)l(y#a893=x$'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
-DEBUG_LOG = True
+LOG_LEVEL = logging.DEBUG
 ALLOWED_HOSTS = []
+ERROR_MESSAGE_KEY = 'error_message'
 
 
 # Application definition
@@ -119,18 +148,3 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.10/howto/static-files/
 
 STATIC_URL = '/static/'
-
-#oauth2 configuration
-#credentials
-CLIENT_ID ='602057e53fe4e27eded9'
-CLIENT_SECRET = 'b72544f2235e6418e7e027d2856e947f907071c9'
-USERNAME = 'olawo' #need to find a reliable encryption module !!
-PASSWORD = 'oo4423' #ditto
-#url prefixes for REST calls
-TOKEN_URL_PREFIX = 'http://localhost:8000/oauth2/access_token/'
-COURSE_LIST_URL_PREFIX = 'http://localhost:8000/api/courses/v1/courses/?username='
-COURSE_DERAIL_URL_PREFIX = 'http://localhost:8000/api/courses/v1/courses/'
-USERS_API_URL_PREFIX = 'http://localhost:8000/api/user/v1/accounts/{}/[?view=shared]'
-COURSE_DETAIL_USER_URL_PREFIX = 'http://localhost:8000/api/courses/v1/courses/?username='
-#cookies
-USERNAME_COOKIE = 'username'

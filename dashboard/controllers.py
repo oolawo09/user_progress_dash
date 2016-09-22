@@ -1,54 +1,176 @@
 import requests
+import urllib.parse
 from django.conf import settings
-from .models import Course
+from .models import Todo, Course
 from .utils import refreshToken
+from .views import index
+import logging
+from django.shortcuts import render
 
-##globals for getUser, userExists and getUserCourses
-##TODO refactor because they're exposed to other
-#functions in this file
+
+# TODO write unit tests
+
+
+def indexController(request):
+  # Initialise username from either request (user just entered username)
+  # or cookie (user's entered a username in this session)
+  username = getUserName(request)
+
+  # if username wasn't found
+  if username == None:
+    logging.error("username for this session not set yet")
+    context = {settings.ERROR_MESSAGE_KEY:
+               "username for this session not set yet"}
+    return render(request, 'dashboard/todo.html', context)
+
+  # #TODO: fetching user from LMS fails consistently
+  # or user by username doesn't exist in LMS,
+  # render
+  # if userExistsInLMS(username) == False:
+    # context = {'todo_list': None, 'courses': None,  settings.ERROR_MESSAGE_KEY:
+    #           "username not in LMS"}
+    # return render(request, 'dashboard/todo.html', context)
+
+  # logging
+  #logging.info("username %s in LMS ", username)
+
+  # if username has been entered in this session
+  # and user exists in LMS
+  # get global todo_list
+
+  # TODO optimise by getting user's
+  #todo instead of global todo list###
+
+  all_todos = Todo.objects.all()
+  # get current user's todos
+  user_todos = getUserTodos(all_todos, username)
+  # which tasks are pending ??
+  user_pending_todos = getPendingTodos(user_todos)
+
+  # get  user's course progress data
+  course_progress = getUserCourses(username)
+
+  # feed to do list
+  # and course progress data
+  # into context
+  context = {'todo_list': user_pending_todos, 'courses': course_progress}
+
+  # render a response
+  response = index(request, context)
+
+  # set the username in the cookie
+  # for the next request before returning the response object
+
+  # if username isn't ''
+  # set settings.COOKIENAME cookie to username
+
+  logging.info("username %s set in session cookie", username)
+  request.session[settings.USERNAME_COOKIE] = username
+
+  return response
+
+
+def getUserName(request):
+  username = None
+  # If request type is POST (username has been entered)
+  # attempt to retrieve username from POST request data
+  if request.method == settings.REQUEST_TYPE_POST:
+    username = request.POST.get(settings.USERNAME_COOKIE, None)
+    # keep username only if it's valid
+    if username != None and len(username) == 0:
+      logging.warning("username in post was: %s ", username)
+      username = None
+
+  # if method wasn't post (username wasn't entered)
+  # or username wasn't in POST data
+  # attempt to retrieve username from cookie.
+  if username == None:
+    logging.warning("no username retrieved from POST")
+    username = request.session.get(settings.USERNAME_COOKIE, None)
+
+  # if username wasn't in cookie either
+  # log warning. User has to submit username first
+  if username == None:
+    logging.info("username %s retrieved from cookie", username)
+    return None
+  # set username retrieved in cookie. return username
+  logging.info("username %s set in cookie", username)
+  request.session[settings.USERNAME_COOKIE] = username
+  return username
+
+
+# globals for getUser, userExists and getUserCourses
+# TODO refactor because they're exposed to other
+# functions in this file
 token = refreshToken()
 authField = "Bearer " + token
 headers = {"Authorization": authField}
 
-def getUser(username):
-    url = settings.USERS_API_URL_PREFIX + username
-    #get user data from LMS via users api
-    response = requests.get(url, headers=headers)
-    return response.json()
 
-def userExists(username):
-    return getuser(username, )[settings.USEREXISTS_CHECKER_KEY] != None
+def getUser(username):
+  # insert username into url
+  url = settings.USERS_API_URL_PREFIX % username
+  # url = urllib.parse.quote(unencoded_url_string, safe='')
+  # print("\n\n\nurl\n\n\n"+url)
+  # get user data from LMS via users api
+  logging.debug("url get: %s", url)
+  response = requests.get(url, headers=headers)
+  # raise exception for bad http responses
+  # return None
+  if response.status_code != 200:
+    response.raise_for_status
+    logging.warning("failed to get user data from LMS")
+    return None
+
+  # TODO: testing. what types of responses could I get here
+  # how to handle each
+  return response
+
+
+def userExistsInLMS(username):
+  user_dict = getUser(username)
+
+  # if getUser returns None
+  # return false
+  if user_dict == None:
+    logging.warning("user doesn't exist")
+    return False
+
+  # if user_dict contains 'name' key
+  # user exists
+  logging.debug("user object: %s ", user_dict)
+  return user_dict.json()[settings.USER_EXISTS_CHECKER_KEY] != None
+
 
 def getUserCourses(username):
-  #throw error if user with username doesn't exist
-  if userExists(username) == False:
-      ##TODO log this error
-      raise ValueError("user by username '+ username + ' doesn't exist in the LMS")
+  # throw error if user with username doesn't exist
 
   url = settings.COURSE_DETAIL_USER_URL_PREFIX + username
-  #get user's courses data from LMS via courses API
+  # get user's courses data from LMS via courses API
   response = requests.get(url, headers=headers)
-  users_course_list =response.json()['results']
+
+  # TODO: testing. what types of responses could I get here
+  # how to handle those cases
+
+  # raise exception for bad http responses
+  response.raise_for_status()
+
+  users_course_list = response.json()['results']
   user_courses_progress_data = []
 
   for course in users_course_list:
-    #filter out progress data
+    # filter out progress data
     user_courses_progress_data.append(getCourse(course))
 
   return user_courses_progress_data
 
+
 def getCourse(course):
-  #get and return course number, start date and enddate
-  course_progress_data = Course(course['number'], course['start'], course['end'])
+  # get and return course number, start date and enddate
+  course_progress_data = Course(
+      course['number'], course['start'], course['end'])
   return course_progress_data
 
-
-def addTodo(request):
-  # create the todo
-  t = Todo(todo_text=request.POST.get('text', ''), username=request.sessions[settings.USERNAME_COOKIE])
-  t.save()
-  # redirect to home page
-  return HttpResponseRedirect(reverse('dashboard:index'))
 
 def getPendingTodos(todos):
   for todo in todos:
@@ -57,6 +179,7 @@ def getPendingTodos(todos):
       todo.delete()
   return todos
 
+
 def getUserTodos(todos, name):
   tasks = []
   for todo in todos:
@@ -64,18 +187,3 @@ def getUserTodos(todos, name):
     if todo.username == name:
       tasks.append(todo)
   return tasks
-
-
-def getUserName(request):
-  username = None
-  # If request type is POST
-  # attempt to retrieve username from POST request data
-  if request.method == settings.REQUEST_TYPE_POST:
-    username = request.POST.get(settings.USERNAME_COOKIE, None)
-
-  # if username wasn't in POST data
-  # attempt to retrieve it from cookie.
-  if username == None:
-    username = request.sessions.get(settings.USERNAME_COOKIE, None)
-
-  return username
