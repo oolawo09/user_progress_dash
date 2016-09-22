@@ -1,5 +1,4 @@
 </br>
-</br>
 
 <form action="{% url 'dashboard:index'  %}" method="post">
   {% csrf_token %} username:
@@ -10,7 +9,7 @@
 ______________________________________________________________________ </br>{% if courses %} {% if overall_progress %}overall progress: {{overall_progress}} {% endif %}
 <ul>
   {% for course in courses %} {% if course %}
-  <li>{{ course.number }} {{course.progress_bars}}</li>
+  <li>{{ course.number }} {% if course.progress_bars %} {{course.progress_bars}} {% else %} [no progress data available] {% endif %}</li>
   {% endif %} {% endfor %}
 </ul>
 
@@ -23,7 +22,7 @@ ______________________________________________________________________ </br>{% i
   {% for todo in todo_list %}
   <li>
     {{ todo.todo_text }}
-    <input type="radio" name="choice" id="todo" value="[mark completed]" /> [done]
+    <input type="radio" name="choice" id="todo" value="[mark completed]" /> [do]
     <!-- TODO: put list in a table -->
 
   </li>

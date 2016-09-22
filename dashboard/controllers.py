@@ -24,7 +24,7 @@ def indexController(request):
                "username for this session not set yet"}
     return render(request, 'dashboard/todo.html', context)
 
-  # #TODO: fetching user from LMS fails consistently
+  # #TODO: fetching user from LMS fails consistently. fix it
   # or user by username doesn't exist in LMS,
   # render
   # if userExistsInLMS(username) == False:
@@ -65,9 +65,8 @@ def indexController(request):
   # set the username in the cookie
   # for the next request before returning the response object
 
-  # if username isn't ''
+  # TODO should I block username of value ''? is '' a valid username ?
   # set settings.COOKIENAME cookie to username
-
   logging.info("username %s set in session cookie", username)
   request.session[settings.USERNAME_COOKIE] = username
 
@@ -86,8 +85,9 @@ def getUserName(request):
       username = None
 
   # if method wasn't post (username wasn't entered)
-  # or username wasn't in POST data
-  # attempt to retrieve username from cookie.
+  # or username wasn't in POST data (malformed POST request ?)
+  # attempt to retrieve username from cookie. (we're staying maintaining
+  # current session as was)
   if username == None:
     logging.warning("no username retrieved from POST")
     username = request.session.get(settings.USERNAME_COOKIE, None)
@@ -95,11 +95,9 @@ def getUserName(request):
   # if username wasn't in cookie either
   # log warning. User has to submit username first
   if username == None:
-    logging.info("username %s retrieved from cookie", username)
+    logging.info(
+        "username %s retrieved from cookie: submit valid username", username)
     return None
-  # set username retrieved in cookie. return username
-  logging.info("username %s set in cookie", username)
-  request.session[settings.USERNAME_COOKIE] = username
   return username
 
 

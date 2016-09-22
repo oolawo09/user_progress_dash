@@ -14,20 +14,19 @@ def addTodo(request):
   # get username stored in session
   username = request.session.get(settings.USERNAME_COOKIE, None)
 
-  # if user hasn't entered username
-  # in current session
+  # if user hasn't entered username in current session
   if username == None:
     # render blank default page
     context = {settings.ERROR_MESSAGE_KEY,
                "you haven't entered a user name for this session"}
     return index(request, context)
 
-  # if post request doesn't have 'text' key
-  # (malformed post ?)
+  # if post request doesn't have 'text' key (malformed post ?)
   todo_text = request.POST.get('text', None)
   if todo_text == None:
     context = {settings.ERROR_MESSAGE_KEY,
                "try input the todo again"}
+    # render page with error message
     return index(request, context)
 
   # create and persist todo with values from get request
