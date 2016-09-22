@@ -7,19 +7,26 @@
   <input type="submit" value="submit" />
 </form>
 
-______________________________________________________________________ {% if courses %}
+______________________________________________________________________ </br>{% if courses %} {% if overall_progress %}overall progress: {{overall_progress}} {% endif %}
 <ul>
-  {% for course in courses %}
-  <li>{{ course.number }} {{course.start}} {{course.end}}</li>
-  {% endfor %}
+  {% for course in courses %} {% if course %}
+  <li>{{ course.number }} {{course.progress_bars}}</li>
+  {% endif %} {% endfor %}
 </ul>
+
 
 {% else %}
 <p>You haven't signed up for any courses</p>
 {% endif %} ______________________________________________________________________ {% if todo_list %}
+
 <ul>
   {% for todo in todo_list %}
-  <li>{{ todo.todo_text }}</li>
+  <li>
+    {{ todo.todo_text }}
+    <input type="radio" name="choice" id="todo" value="[mark completed]" /> [done]
+    <!-- TODO: put list in a table -->
+
+  </li>
   {% endfor %}
 </ul>
 {% else %}
@@ -32,4 +39,4 @@ ______________________________________________________________________ {% if cou
   <input type="submit" value="submit" />
 </form>
 
-______________________________________________________________________ </br>error: {{ error_message }}
+______________________________________________________________________ {%if error_message %}</br>error: {{ error_message }} {% endif %}

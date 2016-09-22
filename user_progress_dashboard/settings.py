@@ -46,6 +46,15 @@ USERNAME_COOKIE = 'username'
 # HTTP request types
 REQUEST_TYPE_POST = 'POST'
 
+# regex
+UTC_DATE_TIME_REGEX_STRING = '\d\d\d\d-\d\d-\d\dT\d\d:\d\d:\d\dZ'
+# TODO find out what format this is?
+OTHER_DATE_TIME_FORMAT_STRING = '%Y-%m-%dT%H:%M:%SZ'
+
+#
+TOTAL_NUMBER_OF_PROGRESS_BARS = 10
+PROGRESS_BAR_CHARACTER = "#"
+PROGRESS_BAR_NO_CHARACTER = "_"
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = '*lsvu!x5^f*e#l67f+*j3yrx(-2w2z2n&54c(^)l(y#a893=x$'

@@ -5,6 +5,7 @@ from .models import Todo, Course
 from .utils import refreshToken
 from .views import index
 import logging
+import math
 from django.shortcuts import render
 
 
@@ -32,7 +33,7 @@ def indexController(request):
     # return render(request, 'dashboard/todo.html', context)
 
   # logging
-  #logging.info("username %s in LMS ", username)
+  # logging.info("username %s in LMS ", username)
 
   # if username has been entered in this session
   # and user exists in LMS
@@ -48,12 +49,15 @@ def indexController(request):
   user_pending_todos = getPendingTodos(user_todos)
 
   # get  user's course progress data
-  course_progress = getUserCourses(username)
+  progress = getUserCoursesProgressData(username)
+  course_progress = progress[0]
+  overall_progress = progress[1]
 
   # feed to do list
   # and course progress data
   # into context
-  context = {'todo_list': user_pending_todos, 'courses': course_progress}
+  context = {'todo_list': user_pending_todos,
+             'courses': course_progress, 'overall_progress': overall_progress}
 
   # render a response
   response = index(request, context)
@@ -142,7 +146,7 @@ def userExistsInLMS(username):
   return user_dict.json()[settings.USER_EXISTS_CHECKER_KEY] != None
 
 
-def getUserCourses(username):
+def getUserCoursesProgressData(username):
   # throw error if user with username doesn't exist
 
   url = settings.COURSE_DETAIL_USER_URL_PREFIX + username
@@ -156,16 +160,45 @@ def getUserCourses(username):
   response.raise_for_status()
 
   users_course_list = response.json()['results']
-  user_courses_progress_data = []
+  course_progress_bars = []
+
+  total_bars_earned = 0
 
   for course in users_course_list:
-    # filter out progress data
-    user_courses_progress_data.append(getCourse(course))
+    # filter out progress data while filling total progress bar
+    course_progress_data = getCourseProgressBars(course)
+    course_progress_bars.append(course_progress_data)
+    # compute total progress
+    total_bars_earned += course_progress_data.num_of_progress_bars_awarded
 
-  return user_courses_progress_data
+  avg_bars_earned = math.ceil(total_bars_earned / len(course_progress_bars))
+  logging.info("avg_bars_earned : %s", avg_bars_earned)
+
+  logging.info("total_bars : %s", settings.TOTAL_NUMBER_OF_PROGRESS_BARS)
+
+  user_overal_progress_data = fillOutOveralProgressBar(
+      settings.TOTAL_NUMBER_OF_PROGRESS_BARS, avg_bars_earned)
+  logging.info("user_overal_progress_data : %s", user_overal_progress_data)
+
+  return (course_progress_bars, user_overal_progress_data)
 
 
-def getCourse(course):
+# fill out overall progress bar
+def fillOutOveralProgressBar(total_bars, avg_bars_earned):
+  user_overall_progress_bar = "["
+  i = 0
+  while i < total_bars:
+    if i < avg_bars_earned:
+      user_overall_progress_bar += settings.PROGRESS_BAR_CHARACTER
+    else:
+      user_overall_progress_bar += settings.PROGRESS_BAR_NO_CHARACTER
+    i += 1
+  user_overall_progress_bar += "]"
+  logging.info("user_overall_progress_bar : %s", user_overall_progress_bar)
+  return user_overall_progress_bar
+
+
+def getCourseProgressBars(course):
   # get and return course number, start date and enddate
   course_progress_data = Course(
       course['number'], course['start'], course['end'])
