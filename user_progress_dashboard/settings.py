@@ -25,7 +25,6 @@ SECRET_KEY = '*lsvu!x5^f*e#l67f+*j3yrx(-2w2z2n&54c(^)l(y#a893=x$'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 DEBUG_LOG = True
-
 ALLOWED_HOSTS = []
 
 
@@ -131,3 +130,7 @@ PASSWORD = 'oo4423' #ditto
 TOKEN_URL_PREFIX = 'http://localhost:8000/oauth2/access_token/'
 COURSE_LIST_URL_PREFIX = 'http://localhost:8000/api/courses/v1/courses/?username='
 COURSE_DERAIL_URL_PREFIX = 'http://localhost:8000/api/courses/v1/courses/'
+USERS_API_URL_PREFIX = 'http://localhost:8000/api/user/v1/accounts/{}/[?view=shared]'
+COURSE_DETAIL_USER_URL_PREFIX = 'http://localhost:8000/api/courses/v1/courses/?username='
+#cookies
+USERNAME_COOKIE = 'username'

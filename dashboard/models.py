@@ -4,10 +4,10 @@ from django.db import models
 class Todo(models.Model):
     todo_text = models.CharField(max_length=200)
     done = models.BooleanField(default=False)
-    #username = models.CharField(max_length=200)
+    username = models.CharField(max_length=200, default='')
 
     def __str__(self):
-       return self.todo_text
+       return self.todo_text + ":" + self.username
 
 class Course(models.Model):
     def __init__(self, number, start, end):

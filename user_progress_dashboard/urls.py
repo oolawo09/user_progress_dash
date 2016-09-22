@@ -17,6 +17,9 @@ from django.conf.urls import url, include
 from django.contrib import admin
 
 urlpatterns = [
-    url(r'^home/', include('dashboard.urls')),
+    #admin stuff
     url(r'^admin/', admin.site.urls),
+
+    #all other urls routed to dashboard app
+    url(r'^$', include('dashboard.urls')),
 ]

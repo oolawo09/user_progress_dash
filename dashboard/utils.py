@@ -1,10 +1,8 @@
 import requests
 import requests.auth
-import logging
 from django.conf import settings
 
-#initialise logging
-logger = logging.getLogger(__name__)
+
 
 
 #generate a new oauth2 token if last one has expired

@@ -1,11 +1,12 @@
 from django.conf.urls import url
 
-from . import views
+from . import views, controllers
 
 app_name = 'dashboard'
 
 urlpatterns = [
-    url(r'^add_todo' ,views.add_todo, name='add_todo'),
+    #add a todo
+    url(r'^addTodo' ,controllers.addTodo, name='addTodo'),
+    #render the view
     url(r'^$', views.index, name='index'),
-
 ]

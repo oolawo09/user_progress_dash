@@ -23,7 +23,7 @@ ______________________________________________________________________ {% if cou
 <p>No todos are available.</p>
 {% endif %}
 
-<form action="{% url 'dashboard:add_todo' %}" method="post">
+<form action="{% url 'dashboard:addTodo' %}" method="post">
   {% csrf_token %} new task:
   <input type="text" name="text" />
   <input type="submit" value="submit" />
