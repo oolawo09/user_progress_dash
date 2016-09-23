@@ -1,7 +1,11 @@
 from django.shortcuts import render
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
+from django.conf import settings
+import logging
 
-# Create your views here.
-def index(request): 
-    return HttpResponse("Hello, world. You're at the polls index.")
 
+def index(request, context):
+  logging.info("context to be rendered: %s ", context)
+
+  # render view
+  return render(request, settings.INDEX_HTML, context)
