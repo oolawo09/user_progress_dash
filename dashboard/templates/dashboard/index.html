@@ -2,66 +2,129 @@
 
 <head>
   <title>user progress dashboard</title>
+  <style>
+    table {
+      margin-left: auto;
+      margin-right: auto;
+    }
+  </style>
 </head>
-{% load static %}
 
-<div class="body">
+<body>
+  <table>
+    _________________________________________ </br>
+    _________________________________________ </br>
+    ________________ user progress dashboard _______________</br>
+    _________________________________________</br>
+    </br>
+    </br>
+    _________________________________________welcome {{username}}_____________</br>
+    </br>
 
-  <body>
-    <link rel="stylesheet" href="/static/index.css" type="text/css" />
 
-    <div class="form">
+    <tr>
       <form action="{% url 'dashboard:index'  %}" method="post">
-        {% csrf_token %} username:
-        <input type="text" name="username" />
-        <input type="submit" value="search" />
+        {% csrf_token %}
+        <td>username
+          <input type="text" name="username" />
+        </td>
+        <td>
+          <input type="submit" value="search" />
+        </td>
       </form>
-    </div>
-    <div>
-      </br>
-      <table>
-        <tr>{% if overall_progress %}overall progress: {{overall_progress}} {% endif %}</tr>
-        {% if courses %} {% for course in courses %} {% if course %}
-        <tr>
-          <td>{{ course.number }} </td>
-          <td>{% if course.progress_bars %} {{course.progress_bars}} {% else %} [no progress data available] {% endif %}</td>
-        </tr>
-        {% endif %} {% endfor %}
-        </ul>
-      </table>
 
-      {% else %}
-      <p>You haven't signed up for any courses</p>
-      {% endif %}
-    </div>
-    <table> {% if todo_list %}
 
-      <ul>
-        {% for todo in todo_list %}
-        <li>
-          {{ todo.todo_text }}
-          <input type="radio" name="choice" id="todo" value="[mark completed]" /> [do]
-          <!-- TODO: put list in a table -->
+    </tr>
+    <tr>
+      <td>______________________</td>
+      <td>______________________</td>
+    </tr>
 
-        </li>
-        {% endfor %}
-      </ul>
-      {% else %}
-      <p>No todos are available.</p>
-      {% endif %}
+    {% if overall_progress %}
+    <tr>
+      <td>overall progress:</td>
+      <td>{{overall_progress}} </td>
+    </tr>{% endif %}
+    <tr>
+      <td>______________________</td>
+      <td>______________________</td>
+    </tr>
+    <tr>
+      <td>course </td>
+      <td>progress</td>
+    </tr>
+    <tr>
+      <td>______________________</td>
+      <td>______________________</td>
+    </tr>{% if courses %} {% for course in courses %} {% if course %}
+    <tr>
+      <td>{{ course.number }} </td>
+      <td>{% if course.progress_bars %} {{course.progress_bars}} {% else %} [no progress data available] {% endif %}</td>
+    </tr>
+    {% endif %} {% endfor %} {% else %}
+    <tr>
+      <td>
+        <p>You haven't signed up for any courses</p>
+      </td>
+    </tr>
+    {% endif %}
+    <tr>
+      <td>______________________</td>
+      <td>______________________</td>
+    </tr>
+    <tr>
+      <td>todo list</td>
+      <td>______________________</td>
+    </tr>
 
-    </table>
-    <div>
+    {% if todo_list %} {% for todo in todo_list %}
+    <tr>
+      <form action="{% url 'dashboard:do'  %}" method="post">
+        {% csrf_token %}
+        <td>{{ todo.todo_text }}</td>
+        <td>
+          <input type="hidden" name="id" value="{{ todo.id }}">
+          <input type="submit" value="[do]" /> [do]</td>
+      </form>
+    </tr>
+
+    {% endfor %} {% else %}
+    <tr>
+      <td>______________________</td>
+      <td>______________________</td>
+    </tr>
+    <tr>
+      <td>you're </td>
+      <td>done</td>
+    </tr>
+    <tr>
+      <td>______________________</td>
+      <td>______________________</td>
+    </tr>
+    {% endif %}
+
+    <tr>
+      <td>add todo</td>
+      <td>______________________</td>
+    </tr>
+    <tr>
+      <td>______________________</td>
+      <td>______________________</td>
+    </tr>
+    <tr>
       <form action="{% url 'dashboard:addTodo' %}" method="post">
-        {% csrf_token %} new task:
-        <input type="text" name="text" />
-        <input type="submit" value="submit" />
+        {% csrf_token %}
+        <td>
+          new task
+          <input type="text" name="text" />
+        </td>
+        <td>
+          <input type="submit" value="submit" />
+        </td>
       </form>
-
-    </div>
-    <div>{%if error_message %}</br>error: {{ error_message }} {% endif %}
-    </div>
-    <div>
-  </body>
+    </tr>
+    {%if error_message %}</br>error: {{ error_message }} {% endif %}
+</body>
+</table>
 
 </html>
