@@ -56,7 +56,7 @@ def indexController(request):
   # feed to do list
   # and course progress data
   # into context
-  context = {'todo_list': user_pending_todos,
+  context = {'username': username, 'todo_list': user_pending_todos,
              'courses': course_progress, 'overall_progress': overall_progress}
 
   # render a response
@@ -206,7 +206,9 @@ def getCourseProgressBars(course):
 def getPendingTodos(todos):
   for todo in todos:
     # delete's all the user's complete todos
+
     if todo.done:
+      logging.info("deleting done todo: %s", todo)
       todo.delete()
   return todos
 

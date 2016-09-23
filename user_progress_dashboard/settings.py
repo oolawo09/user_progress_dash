@@ -65,7 +65,6 @@ LOG_LEVEL = logging.DEBUG
 ALLOWED_HOSTS = []
 ERROR_MESSAGE_KEY = 'error_message'
 
-
 # Application definition
 
 INSTALLED_APPS = [
@@ -157,3 +156,4 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.10/howto/static-files/
 
 STATIC_URL = '/static/'
+INDEX_HTML = 'dashboard/index.html'

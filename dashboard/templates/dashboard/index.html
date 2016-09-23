@@ -112,7 +112,7 @@
       <td>______________________</td>
     </tr>
     <tr>
-      <form action="{% url 'dashboard:addTodo' %}" method="post">
+      <form action=" {% url 'dashboard:addTodo' %}" method="post">
         {% csrf_token %}
         <td>
           new task

@@ -2,6 +2,7 @@ from django.conf import settings
 from .models import Todo
 from django.http import HttpResponseRedirect, HttpResponseNotFound
 from django.urls import reverse
+import logging
 # TODO logging
 
 
@@ -32,6 +33,22 @@ def addTodo(request):
   # create and persist todo with values from get request
   t = Todo(todo_text=todo_text, username=username)
   t.save()
+
+  # redirect to home page
+  return HttpResponseRedirect(reverse('dashboard:index'))
+
+
+def do(request):
+  # retrieve todo by todo_id
+  # TODO # make sure todo_id is valid and exist in DB
+  # mark it done
+  todo_id = request.POST.get('id', None)
+  logging.info("marking %s done", todo_id)
+  todo = Todo.objects.get(id=todo_id)
+
+  if todo != None:
+    logging.info("marking %s done", todo)
+    todo.delete()
 
   # redirect to home page
   return HttpResponseRedirect(reverse('dashboard:index'))
