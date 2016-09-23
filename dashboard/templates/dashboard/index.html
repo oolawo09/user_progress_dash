@@ -1,0 +1,67 @@
+<html>
+
+<head>
+  <title>user progress dashboard</title>
+</head>
+{% load static %}
+
+<div class="body">
+
+  <body>
+    <link rel="stylesheet" href="/static/index.css" type="text/css" />
+
+    <div class="form">
+      <form action="{% url 'dashboard:index'  %}" method="post">
+        {% csrf_token %} username:
+        <input type="text" name="username" />
+        <input type="submit" value="search" />
+      </form>
+    </div>
+    <div>
+      </br>
+      <table>
+        <tr>{% if overall_progress %}overall progress: {{overall_progress}} {% endif %}</tr>
+        {% if courses %} {% for course in courses %} {% if course %}
+        <tr>
+          <td>{{ course.number }} </td>
+          <td>{% if course.progress_bars %} {{course.progress_bars}} {% else %} [no progress data available] {% endif %}</td>
+        </tr>
+        {% endif %} {% endfor %}
+        </ul>
+      </table>
+
+      {% else %}
+      <p>You haven't signed up for any courses</p>
+      {% endif %}
+    </div>
+    <table> {% if todo_list %}
+
+      <ul>
+        {% for todo in todo_list %}
+        <li>
+          {{ todo.todo_text }}
+          <input type="radio" name="choice" id="todo" value="[mark completed]" /> [do]
+          <!-- TODO: put list in a table -->
+
+        </li>
+        {% endfor %}
+      </ul>
+      {% else %}
+      <p>No todos are available.</p>
+      {% endif %}
+
+    </table>
+    <div>
+      <form action="{% url 'dashboard:addTodo' %}" method="post">
+        {% csrf_token %} new task:
+        <input type="text" name="text" />
+        <input type="submit" value="submit" />
+      </form>
+
+    </div>
+    <div>{%if error_message %}</br>error: {{ error_message }} {% endif %}
+    </div>
+    <div>
+  </body>
+
+</html>

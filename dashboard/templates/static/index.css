@@ -1,0 +1,16 @@
+div{
+  width: 50%;
+  margin: 0 auto;
+
+}
+
+div.body {
+  width: 50%;
+  margin: 0 auto;
+  text-align: center;
+}
+
+div.form{
+  width: 50%;
+  margin: 0 auto;
+}
