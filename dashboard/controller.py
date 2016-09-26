@@ -1,76 +1,19 @@
-import requests
-import urllib.parse
-from django.conf import settings
-from .models import Todo, Course
-from .utils import refreshToken
-from .views import index
-import logging
-import math
 from django.shortcuts import render
+from django.http import HttpResponse, HttpResponseRedirect
+from django.conf import settings
+from .utils import refreshToken
+import requests
+from .models import Todo, Course
+import math
 
+import logging
 
-# TODO write unit tests
-
-
-def indexController(request):
-  # Initialise username from either request (user just entered username)
-  # or cookie (user's entered a username in this session)
-  username = getUserName(request)
-
-  # if username wasn't found
-  if username == None:
-    logging.error("username for this session not set yet")
-    context = {settings.ERROR_MESSAGE_KEY:
-               "username for this session not set yet"}
-    return render(request, 'dashboard/todo.html', context)
-
-  # #TODO: fetching user from LMS fails consistently. fix it
-  # or user by username doesn't exist in LMS,
-  # render
-  # if userExistsInLMS(username) == False:
-    # context = {'todo_list': None, 'courses': None,  settings.ERROR_MESSAGE_KEY:
-    #           "username not in LMS"}
-    # return render(request, 'dashboard/todo.html', context)
-
-  # logging
-  # logging.info("username %s in LMS ", username)
-
-  # if username has been entered in this session
-  # and user exists in LMS
-  # get global todo_list
-
-  # TODO optimise by getting user's
-  #todo instead of global todo list###
-
-  all_todos = Todo.objects.all()
-  # get current user's todos
-  user_todos = getUserTodos(all_todos, username)
-  # which tasks are pending ??
-  user_pending_todos = getPendingTodos(user_todos)
-
-  # get  user's course progress data
-  progress = getUserCoursesProgressData(username)
-  course_progress = progress[0]
-  overall_progress = progress[1]
-
-  # feed to do list
-  # and course progress data
-  # into context
-  context = {'username': username, 'todo_list': user_pending_todos,
-             'courses': course_progress, 'overall_progress': overall_progress}
-
-  # render a response
-  response = index(request, context)
-
-  # set the username in the cookie
-  # for the next request before returning the response object
-
-  # TODO should I block username of value ''? is '' a valid username ?
-  # set settings.COOKIENAME cookie to username
-  logging.info("username %s set in session cookie", username)
-  request.session[settings.USERNAME_COOKIE] = username
-
-  return response
+# globals for getUser, userExists and getUserCourses
+# TODO refactor because they're exposed to other
+# functions in this file
+token = refreshToken()
+authField = "Bearer " + token
+headers = {"Authorization": authField}
 
 
 def getUserName(request):
@@ -99,14 +42,6 @@ def getUserName(request):
         "username %s retrieved from cookie: submit valid username", username)
     return None
   return username
-
-
-# globals for getUser, userExists and getUserCourses
-# TODO refactor because they're exposed to other
-# functions in this file
-token = refreshToken()
-authField = "Bearer " + token
-headers = {"Authorization": authField}
 
 
 def getUser(username):
@@ -153,9 +88,8 @@ def getUserCoursesProgressData(username):
 
   # TODO: testing. what types of responses could I get here
   # how to handle those cases
-
-  # raise exception for bad http responses
-  response.raise_for_status()
+  if response.status_code != 200:
+    return None
 
   users_course_list = response.json()['results']
   course_progress_bars = []
@@ -203,20 +137,10 @@ def getCourseProgressBars(course):
   return course_progress_data
 
 
-def getPendingTodos(todos):
+def getUserTodos(username):
+  # TODO retrieve only this user's todo items
+  todos = Todo.objects.all()
   for todo in todos:
-    # delete's all the user's complete todos
-
-    if todo.done:
-      logging.info("deleting done todo: %s", todo)
+    if todo.username != username:
       todo.delete()
   return todos
-
-
-def getUserTodos(todos, name):
-  tasks = []
-  for todo in todos:
-    # filter by name
-    if todo.username == name:
-      tasks.append(todo)
-  return tasks

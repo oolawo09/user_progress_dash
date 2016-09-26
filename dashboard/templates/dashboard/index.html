@@ -32,8 +32,16 @@
           <input type="submit" value="search" />
         </td>
       </form>
-
-
+    </tr>
+    <tr>
+      <td>______________________</td>
+      <td>______________________</td>
+      {%if error_message %}
+    </tr>
+    <tr>
+      <td>
+        </br>error:</td>
+      <td>{{ error_message }}</td> {% endif %}
     </tr>
     <tr>
       <td>______________________</td>
@@ -76,15 +84,19 @@
       <td>todo list</td>
       <td>______________________</td>
     </tr>
+    <tr>
+      <td>______________________</td>
+      <td>______________________</td>
+    </tr>
 
     {% if todo_list %} {% for todo in todo_list %}
     <tr>
-      <form action="{% url 'dashboard:do'  %}" method="post">
+      <form action="{% url 'dashboard:completeTodo'  %}" method="post">
         {% csrf_token %}
         <td>{{ todo.todo_text }}</td>
         <td>
           <input type="hidden" name="id" value="{{ todo.id }}">
-          <input type="submit" value="[do]" /> [do]</td>
+          <input type="submit" value="[do]" /> </td>
       </form>
     </tr>
 
@@ -95,14 +107,17 @@
     </tr>
     <tr>
       <td>you're </td>
-      <td>done</td>
+      <td>done !</td>
     </tr>
     <tr>
       <td>______________________</td>
       <td>______________________</td>
     </tr>
     {% endif %}
-
+    <tr>
+      <td>______________________</td>
+      <td>______________________</td>
+    </tr>
     <tr>
       <td>add todo</td>
       <td>______________________</td>
@@ -123,7 +138,7 @@
         </td>
       </form>
     </tr>
-    {%if error_message %}</br>error: {{ error_message }} {% endif %}
+
 </body>
 </table>
 
