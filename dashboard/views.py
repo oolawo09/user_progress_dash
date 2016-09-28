@@ -4,7 +4,7 @@ from django.conf import settings
 from django.http import HttpResponseRedirect
 from django.core.urlresolvers import reverse
 from .models import Todo, Course
-from .controller import getUserName, getUser, userExistsInLMS, getUserCoursesProgressData, fillOutOveralProgressBar,  getUserTodos
+from .controller import getUserName, getUserProgress,  getUserTodos
 import logging
 import math
 from django.shortcuts import render
@@ -12,8 +12,9 @@ from django.shortcuts import render
 
 # TODO write unit tests
 
-# render index view
 def index(request):
+  # render index view
+
   # Initialise username from either request (user just entered username)
   # or cookie (user's entered a username in this session)
   username = getUserName(request)
@@ -25,7 +26,6 @@ def index(request):
                "username for this session not set yet"}
     return render(request, settings.INDEX_HTML, context)
 
-  # TODO should I block username of value ''? is '' a valid username ?
   # set the username in the cookie
   # for the next request before returning the response object
   logging.info("username %s set in session cookie", username)
@@ -35,7 +35,7 @@ def index(request):
   user_todos = getUserTodos(username)
 
   # get  user's course progress data
-  progress = getUserCoursesProgressData(username)
+  progress = getUserProgress(username)
 
   # if progress not received, render error message
   if progress == None:
@@ -58,6 +58,8 @@ def index(request):
 
 
 def addTodo(request):
+  # render index view after adding a todo
+
   # if request isn't post
   # render error message
   if request.method != settings.REQUEST_TYPE_POST:
@@ -91,8 +93,9 @@ def addTodo(request):
 
 
 def completeTodo(request):
-  # retrieve todo by todo_id
-  # TODO # make sure todo_id is valid and exist in DB
+  # render index view after completing a todo
+
+  # retrieve todo by todo_id                # TODO # make sure todo_id is valid and exist in DB
   # delete it
   todo_id = request.POST.get('id', None)
   todo = Todo.objects.get(id=todo_id)
@@ -103,5 +106,5 @@ def completeTodo(request):
   else:
     logging.warning("todo with id %s doesn't exist", todo_id)
 
-  # redirect to home page
+  # redirect
   return HttpResponseRedirect(reverse('dashboard:index'))
