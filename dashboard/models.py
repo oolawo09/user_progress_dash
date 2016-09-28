@@ -8,7 +8,6 @@ import logging
 
 class Todo(models.Model):
   todo_text = models.CharField(max_length=200)
-  done = models.BooleanField(default=False)
   username = models.CharField(max_length=200, default='')
 
   def __str__(self):
@@ -18,28 +17,32 @@ class Todo(models.Model):
 class Course(models.Model):
 
   def __datetime(self, date_str):
+    # get the date in new format #TODO: what is the name of this format
     return datetime.strptime(date_str, settings.OTHER_DATE_TIME_FORMAT_STRING)
 
   def __init__(self,  number, start, end):
-    # we'll need the number
-    # to show which courses don't have UTC date time stamp format
+    # course number
     self.number = number
 
     # only working with type UTC timestamp
     utc_date_time_pattern = re.compile(settings.UTC_DATE_TIME_REGEX_STRING)
 
+    # check if start time follows UTC format
     if utc_date_time_pattern.match(str(start)) == None:
       logging.error(" start %s is not a UTC date time stamp", start)
       # use this as an error flag when rendering
       self.num_of_progress_bars_awarded = -1
       return None
 
+    # check if end time follows UTC format
     if utc_date_time_pattern.match(str(end)) == None:
       logging.error(" end %s is not a UTC date time stamp", end)
       # use this as an error flag when rendering
       self.num_of_progress_bars_awarded = -1
       return None
 
+    # if both start and end are UTC format, assign correctly and calculate
+    # number of progress bars
     self.start = self.__datetime(start)
     self.end = self.__datetime(end)
     self.progress_bars = self.computeProgress(self.start, self.end)
