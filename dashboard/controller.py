@@ -58,33 +58,22 @@ def getUserProgress(username):
 
   # draw out all course data
   course_list = response.json()['results']
-  data = getCourseData(course_list)
-  all_course_data = data[0]
-
-  # and the overall progress in all courses
-  # which we use to find the average of progress from all courses
-  # that's used to generate the overall_progress string of bars
-
-  total_bars_earned = data[1]
-  avg_bars_earned = math.ceil(total_bars_earned / len(all_course_data))
-
-  overall_progress = fillOutOveralProgressBar(
-      settings.TOTAL_NUMBER_OF_PROGRESS_BARS, avg_bars_earned)
-
-  return (all_course_data, overall_progress)
+  return getCourseData(course_list)
 
 
 def getCourseData(course_list):
 
   all_course_data = []
   # used to generate total progress string
-  total_bars_earned = 0
+  sum_of_percentages = 0
   for course in course_list:
     course_data = Course(course['number'], course['start'], course['end'])
     all_course_data.append(course_data)
-    total_bars_earned += course_data.num_of_bars
+    if course_data.percentage != None:
+      sum_of_percentages += course_data.percentage
 
-  return (all_course_data, total_bars_earned)
+  avg_percentage = sum_of_percentages / len(all_course_data)
+  return (all_course_data, avg_percentage)
 
 
 def fillOutOveralProgressBar(total_bars, avg_bars_earned):

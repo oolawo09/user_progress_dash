@@ -21,8 +21,7 @@ class Course(models.Model):
     self.number = number
     self.start = formatDateTime(start)
     self.end = formatDateTime(end)
-    self.num_of_bars = computeProgress(self.start, self.end)
-    self.progress_bar_string = fillBars(self.num_of_bars)
+    self.percentage = computeProgress(self.start, self.end)
 
   def __str__(self):
     return self.number
@@ -49,33 +48,12 @@ def computeProgress(start, end):
   # award progress bars
 
   if start == None or end == None:
-    return -1
+    return None
 
   course_duration = end - start
   current_time = datetime.now()
   # number of bars is proportional to the amount of time passed since the
   # course started
   num_of_bars = ((
-      current_time - start) / course_duration) * settings.TOTAL_NUMBER_OF_PROGRESS_BARS
-  return num_of_bars
-
-
-def fillBars(num_of_bars):
-  # fill up progress bars
-
-  # input error check
-  if num_of_bars == -1:
-    return None
-
-  progress_bars = "["
-
-  i = 0
-  while i < settings.TOTAL_NUMBER_OF_PROGRESS_BARS:
-    if i < num_of_bars:
-      progress_bars += settings.PROGRESS_BAR_CHARACTER
-    else:
-      progress_bars += settings.PROGRESS_BAR_NO_CHARACTER
-    i += 1
-
-  progress_bars += "]"
-  return progress_bars
+      current_time - start) / course_duration) * settings.PERCENTAGE
+  return int(num_of_bars)

@@ -51,7 +51,7 @@
     {% if overall_progress %}
     <tr>
       <td>overall progress:</td>
-      <td>{{overall_progress}} </td>
+      <td>{{overall_progress}} &#37;</td>
     </tr>{% endif %}
     <tr>
       <td>______________________</td>
@@ -67,7 +67,7 @@
     </tr>{% if courses %} {% for course in courses %} {% if course %}
     <tr>
       <td>{{ course.number }} </td>
-      <td>{% if course.progress_bar_string %} {{course.progress_bar_string}} {% else %} [no progress data available] {% endif %}</td>
+      <td>{% if course.percentage %}{{course.percentage}} &#37;{% else %} [no progress data available] {% endif %}</td>
     </tr>
     {% endif %} {% endfor %} {% else %}
     <tr>
