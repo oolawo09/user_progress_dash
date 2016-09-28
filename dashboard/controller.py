@@ -102,9 +102,10 @@ def fillOutOveralProgressBar(total_bars, avg_bars_earned):
 
 
 def getUserTodos(username):
-  # TODO retrieve only this user's todo items
-  todos = Todo.objects.all()
-  for todo in todos:
-    if todo.username != username:
-      todo.delete()
+  # retrieve only this user's todo items
+  todos = []
+  all_todos = Todo.objects.all()
+  for todo in all_todos:
+    if todo.username == username:
+      todos.append(todo)
   return todos
