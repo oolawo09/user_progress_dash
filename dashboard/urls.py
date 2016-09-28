@@ -1,7 +1,14 @@
 from django.conf.urls import url
 
-from . import views
+from .views import index, addTodo, completeTodo
+
+app_name = 'dashboard'
 
 urlpatterns = [
-    url(r'^$', views.index, name='index'),
+    # render view
+    url(r'^$', index, name='index'),
+    # add a task
+    url(r'^addTodo', addTodo, name='addTodo'),
+    # perform task
+    url(r'^completeTodo', completeTodo, name='completeTodo'),
 ]
