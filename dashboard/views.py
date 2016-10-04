@@ -46,7 +46,7 @@ def index(request):
   course_progress = progress[0]
   overall_progress = progress[1]
 
-  # feed to do list
+  # feed todo list
   # and course progress data
   # into context
   context = {'username': username, 'todo_list': user_todos,

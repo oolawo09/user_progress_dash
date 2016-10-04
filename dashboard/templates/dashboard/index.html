@@ -2,144 +2,129 @@
 
 <head>
   <title>user progress dashboard</title>
+  <link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.6.0/pure-min.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
   <style>
-    table {
-      margin-left: auto;
-      margin-right: auto;
+    .banner {
+      height: 50px;
+      background: black;
+      border: 1px solid #CCC;
+      width: 960px;
+      margin: 0px auto;
+    }
+
+    .button-xsmall {
+      font-size: 30%;
+    }
+
+    h1 {
+      text-align: center;
+      color: white;
+    }
+
+    .centered-div {
+      margin: auto;
+      width: 50%;
+      padding: 10px;
     }
   </style>
 </head>
 
 <body>
-  <table>
-    _________________________________________ </br>
-    _________________________________________ </br>
-    ________________ user progress dashboard _______________</br>
-    _________________________________________</br>
-    </br>
-    </br>
-    _________________________________________welcome {{username}}_____________</br>
-    </br>
 
+  <div class="banner">
+    <h1>
+        user progress dashboard
+    </h1>
+  </div>
 
-    <tr>
-      <form action="{% url 'dashboard:index'  %}" method="post">
-        {% csrf_token %}
-        <td>username
-          <input type="text" name="username" />
-        </td>
-        <td>
-          <input type="submit" value="search" />
-        </td>
-      </form>
-    </tr>
-    <tr>
-      <td>______________________</td>
-      <td>______________________</td>
+  <div class="centered-div">
+
+    <form class="pure-form" action="{% url 'dashboard:index'  %}" method="post">
+      {% csrf_token %}
+      <fieldset>
+
+        <input id="username" type="text" name="username" placeholder="username" />
+
+        <input class="pure-button pure-button-primary" type="submit" value="search" />
+
+      </fieldset>
+    </form>
+
+    <div class="centered-div">
       {%if error_message %}
-    </tr>
-    <tr>
-      <td>
-        </br>error:</td>
-      <td>{{ error_message }}</td> {% endif %}
-    </tr>
-    <tr>
-      <td>______________________</td>
-      <td>______________________</td>
-    </tr>
 
-    {% if overall_progress %}
-    <tr>
-      <td>overall progress:</td>
-      <td>{{overall_progress}} &#37;</td>
-    </tr>{% endif %}
-    <tr>
-      <td>______________________</td>
-      <td>______________________</td>
-    </tr>
-    <tr>
-      <td>course </td>
-      <td>progress</td>
-    </tr>
-    <tr>
-      <td>______________________</td>
-      <td>______________________</td>
-    </tr>{% if courses %} {% for course in courses %} {% if course %}
-    <tr>
-      <td>{{ course.number }} </td>
-      <td>{% if course.percentage %}{{course.percentage}} &#37;{% else %} [no progress data available] {% endif %}</td>
-    </tr>
-    {% endif %} {% endfor %} {% else %}
-    <tr>
-      <td>
-        <p>You haven't signed up for any courses</p>
-      </td>
-    </tr>
-    {% endif %}
-    <tr>
-      <td>______________________</td>
-      <td>______________________</td>
-    </tr>
-    <tr>
-      <td>todo list</td>
-      <td>______________________</td>
-    </tr>
-    <tr>
-      <td>______________________</td>
-      <td>______________________</td>
-    </tr>
+      </br>error: {{ error_message }}{% endif %}
+    </div>
 
-    {% if todo_list %} {% for todo in todo_list %}
-    <tr>
-      <form action="{% url 'dashboard:completeTodo'  %}" method="post">
+    <div class="centered-div">{% if overall_progress %} overall progress is {{overall_progress}} &#37; {% endif %}</div>
+
+    <div>
+      <table class="pure-table pure-table-horizontal">
+        <thead>
+          <tr>
+
+            <th>course</th>
+            <th>progress in %</th>
+          </tr>
+        </thead>
+        {% if courses %}
+        <tbody>
+          {% for course in courses %} {% if course %}
+          <tr>
+            <td>{{ course.number }}</td>
+            <td>{% if course.percentage %} {{course.percentage}} &#37; {% else %} [no progress data available] {% endif %}</td>
+          </tr>
+          {% endif %} {% endfor %} {% else %}
+          <p>You haven't signed up for any courses</p>
+        </tbody>
+        {% endif %}
+      </table>
+    </div>
+
+    <div>
+      <table class="pure-table pure-table-horizontal">
+        <thead>
+          <tr>
+            <th>todo </th>
+            <th>list</th>
+          </tr>
+        </thead>
+        {% if todo_list %}
+        <tbody>
+          {% for todo in todo_list %}
+          <tr>
+            <form class="pure-form" action="{% url 'dashboard:completeTodo'  %}" method="post">
+              {% csrf_token %}
+              <td>{{ todo.todo_text }}
+                <input type="hidden" name="id" value="{{ todo.id }}">
+              </td>
+              <td>
+                <input class="button-xsmall  pure-button pure-button-primary" type="submit" value="do" />
+              </td>
+            </form>
+          </tr>
+          {% endfor %} {% else %}
+          <tr>
+            <td>done !</td>
+          </tr> {% endif %}
+        </tbody>
+      </table>
+    </div>
+
+    <div>
+      <form class="pure-form" action=" {% url 'dashboard:addTodo' %}" method="post">
         {% csrf_token %}
-        <td>{{ todo.todo_text }}</td>
-        <td>
-          <input type="hidden" name="id" value="{{ todo.id }}">
-          <input type="submit" value="[do]" /> </td>
-      </form>
-    </tr>
+        <fieldset>
+          <input type="text" name="text" placeholder="todo" />
 
-    {% endfor %} {% else %}
-    <tr>
-      <td>______________________</td>
-      <td>______________________</td>
-    </tr>
-    <tr>
-      <td>you're </td>
-      <td>done !</td>
-    </tr>
-    <tr>
-      <td>______________________</td>
-      <td>______________________</td>
-    </tr>
-    {% endif %}
-    <tr>
-      <td>______________________</td>
-      <td>______________________</td>
-    </tr>
-    <tr>
-      <td>add todo</td>
-      <td>______________________</td>
-    </tr>
-    <tr>
-      <td>______________________</td>
-      <td>______________________</td>
-    </tr>
-    <tr>
-      <form action=" {% url 'dashboard:addTodo' %}" method="post">
-        {% csrf_token %}
-        <td>
-          new task
-          <input type="text" name="text" />
-        </td>
-        <td>
-          <input type="submit" value="submit" />
-        </td>
+          <input class="pure-button pure-button-primary" type="submit" value="submit" />
+        </fieldset>
       </form>
-    </tr>
+    </div>
 
+  </div>
 </body>
-</table>
 
 </html>

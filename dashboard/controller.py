@@ -72,22 +72,8 @@ def getCourseData(course_list):
     if course_data.percentage != None:
       sum_of_percentages += course_data.percentage
 
-  avg_percentage = sum_of_percentages / len(all_course_data)
+  avg_percentage = int(sum_of_percentages / len(all_course_data))
   return (all_course_data, avg_percentage)
-
-
-def fillOutOveralProgressBar(total_bars, avg_bars_earned):
-  user_overall_progress_bar = "["
-  i = 0
-  while i < total_bars:
-    if i < avg_bars_earned:
-      user_overall_progress_bar += settings.PROGRESS_BAR_CHARACTER
-    else:
-      user_overall_progress_bar += settings.PROGRESS_BAR_NO_CHARACTER
-    i += 1
-  user_overall_progress_bar += "]"
-  logging.info("user_overall_progress_bar : %s", user_overall_progress_bar)
-  return user_overall_progress_bar
 
 
 def getUserTodos(username):
